@@ -1,103 +1,98 @@
 import os
-import socket
 import time
-import urllib.request
+import requests
+import socket
 from supabase import create_client, Client
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise ValueError("Supabase credentials are missing in environment variables!")
-
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# منابع معتبر و پایدار پروکسی تلگرام
-PROXY_SOURCES = [
+# سورس‌های معتبر و محبوب گیت‌هاب
+SOURCES = [
     "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
-    "https://raw.githubusercontent.com/Hookeai/MTProtoProxy/main/MTProtoProxy.txt"
+    "https://raw.githubusercontent.com/mrmoein/MTProto-Proxy-List/main/proxies.txt"
 ]
 
-def check_tcp_proxy(ip, port, timeout=3.0):
-    """تست سریع اتصال TCP پورت پروکسی"""
-    start_time = time.time()
+def check_proxy_connection(ip, port):
+    """تست سریع اتصال با تایم‌اوت کوتاه"""
     try:
-        with socket.create_connection((ip, int(port)), timeout=timeout):
+        start_time = time.time()
+        with socket.create_connection((ip, int(port)), timeout=2.0):
             ping = int((time.time() - start_time) * 1000)
             return True, ping
-    except Exception:
+    except:
         return False, 0
 
-def fetch_and_parse_proxies():
-    """استخراج و جداسازی امن پروکسی‌ها"""
+def main():
+    print("🚀 Starting proxy checker...")
+    
+    # بررسی اتصال به سوپابیس
+    try:
+        supabase_url = os.environ.get("SUPABASE_URL")
+        supabase_key = os.environ.get("SUPABASE_KEY")
+        if not supabase_url or not supabase_key:
+            print("❌ Error: SUPABASE_URL or SUPABASE_KEY is missing in GitHub Secrets!")
+            return
+            
+        supabase: Client = create_client(supabase_url, supabase_key)
+    except Exception as e:
+        print(f"❌ Supabase Connection Error: {e}")
+        return
+
     valid_proxies = []
     
-    for source in PROXY_SOURCES:
+    for source in SOURCES:
+        print(f"\n📡 Fetching from {source}...")
         try:
-            req = urllib.request.Request(
-                source, 
-                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-            )
-            with urllib.request.urlopen(req, timeout=10) as response:
-                lines = response.read().decode('utf-8', errors='ignore').splitlines()
-                count = 0
-                for line in lines:
-                    line = line.strip()
-                    if not line or line.startswith('#'):
-                        continue
+            response = requests.get(source, timeout=10)
+            lines = response.text.splitlines()
+            count = 0
+            
+            for line in lines:
+                line = line.strip()
+                if not line or line.startswith('#'): 
+                    continue
+                
+                parts = line.split(':')
+                if len(parts) >= 2:
+                    ip = parts[0].strip()
+                    port_str = parts[1].strip()
                     
-                    parts = line.split(':')
-                    if len(parts) >= 2:
-                        ip = parts[0].strip()
-                        port_str = parts[1].strip()
+                    if not port_str.isdigit(): 
+                        continue
                         
-                        if not port_str.isdigit():
-                            continue
+                    port = int(port_str)
+                    secret = parts[2].strip() if len(parts) > 2 else ""
+                    protocol = "MTProto" if secret else "SOCKS5"
+                    
+                    is_alive, ping = check_proxy_connection(ip, port)
+                    if is_alive:
+                        valid_proxies.append({
+                            "ip": ip,
+                            "port": port,
+                            "secret": secret,
+                            "protocol": protocol,
+                            "country_code": "US",
+                            "ping": ping,
+                            "is_active": True
+                        })
+                        count += 1
+                        print(f"✅ Found Active: {ip}:{port} ({ping}ms)")
                         
-                        port = int(port_str)
-                        secret = parts[2].strip() if len(parts) > 2 else ""
-                        protocol = "MTProto" if secret else "SOCKS5"
-                        
-                        # تست سلامت اتصال قبل از ثبت
-                        is_alive, ping = check_tcp_proxy(ip, port)
-                        if is_alive:
-                            valid_proxies.append({
-                                "ip": ip,
-                                "port": port,
-                                "secret": secret,
-                                "protocol": protocol,
-                                "country_code": "US",
-                                "ping": ping,
-                                "is_active": True
-                            })
-                            count += 1
-                            print(f"✅ Valid: {ip}:{port} ({protocol}) - Ping: {ping}ms")
-                            
-                            # محدودیت تعداد برای هر سورس جهت سرعت اجرا
-                            if count >= 15:
-                                break
+                        if count >= 10:  # محدودیت ۱۰ پروکسی از هر سورس برای اجرای سریع
+                            break
         except Exception as e:
-            print(f"⚠️ Error fetching source {source}: {e}")
-            
-    return valid_proxies
+            print(f"⚠️ Failed to process source {source}: {e}")
 
-def main():
-    print("🚀 Starting proxy collection and check...")
-    verified_proxies = fetch_and_parse_proxies()
-    
-    if verified_proxies:
+    if valid_proxies:
         try:
-            # پاک کردن رکوردهای قدیمی برای جلوگیری از انباشتگی
+            print("\n💾 Saving to database...")
+            # پاک کردن دیتای قبلی
             supabase.table("proxies").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-            
-            # درج دسته‌ای پروکسی‌های جدید و سالم
-            response = supabase.table("proxies").insert(verified_proxies).execute()
-            print(f"🎉 Successfully inserted {len(verified_proxies)} proxies into Supabase!")
-        except Exception as db_err:
-            print(f"❌ Database error: {db_err}")
-            raise db_err
+            # ثبت دیتای جدید
+            supabase.table("proxies").insert(valid_proxies).execute()
+            print(f"🎉 Success! {len(valid_proxies)} proxies inserted.")
+        except Exception as e:
+            print(f"❌ Database Insertion Error: {e}")
     else:
-        print("⚠️ No active proxies found in this run.")
+        print("\n⚠️ No active proxies found at this time.")
 
 if __name__ == "__main__":
     main()
