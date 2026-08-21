@@ -5,7 +5,15 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 137
+        "ping": 183
+    },
+    {
+        "ip": "45.66.249.187",
+        "port": 8080,
+        "secret": "",
+        "protocol": "SOCKS5",
+        "country_code": "US",
+        "ping": 59
     },
     {
         "ip": "145.239.41.4",
@@ -13,7 +21,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 99
+        "ping": 143
     },
     {
         "ip": "47.238.130.212",
@@ -21,7 +29,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 187
+        "ping": 138
     },
     {
         "ip": "8.215.15.163",
@@ -29,7 +37,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 230
+        "ping": 176
     },
     {
         "ip": "209.50.173.54",
@@ -37,7 +45,15 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 15
+        "ping": 66
+    },
+    {
+        "ip": "27.147.28.73",
+        "port": 8080,
+        "secret": "",
+        "protocol": "SOCKS5",
+        "country_code": "US",
+        "ping": 137
     },
     {
         "ip": "47.251.74.38",
@@ -45,7 +61,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 52
+        "ping": 23
     },
     {
         "ip": "192.111.130.2",
@@ -53,7 +69,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 66
+        "ping": 108
     },
     {
         "ip": "47.238.60.156",
@@ -61,7 +77,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 192
+        "ping": 139
     },
     {
         "ip": "68.71.243.14",
@@ -69,7 +85,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 63
+        "ping": 74
     },
     {
         "ip": "31.76.15.189",
@@ -77,7 +93,7 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 128
+        "ping": 158
     },
     {
         "ip": "15.237.108.20",
@@ -85,35 +101,19 @@
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
-        "ping": 106
+        "ping": 149
+    },
+    {
+        "ip": "220.128.223.136",
+        "port": 8085,
+        "secret": "",
+        "protocol": "SOCKS5",
+        "country_code": "US",
+        "ping": 129
     },
     {
         "ip": "8.213.197.208",
         "port": 18080,
-        "secret": "",
-        "protocol": "SOCKS5",
-        "country_code": "US",
-        "ping": 233
-    },
-    {
-        "ip": "8.213.134.213",
-        "port": 3333,
-        "secret": "",
-        "protocol": "SOCKS5",
-        "country_code": "US",
-        "ping": 172
-    },
-    {
-        "ip": "39.102.213.187",
-        "port": 18080,
-        "secret": "",
-        "protocol": "SOCKS5",
-        "country_code": "US",
-        "ping": 245
-    },
-    {
-        "ip": "47.238.128.246",
-        "port": 1000,
         "secret": "",
         "protocol": "SOCKS5",
         "country_code": "US",
